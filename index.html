@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anima Mea</title>
+    <style>
+        /* 音乐开关按钮 */
+        .music-btn{
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(255,255,255,0.5);
+            color: #ff99b8;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 99;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            backdrop-filter: blur(4px) sepia(15%);
+            background: url("pic/p.png") no-repeat center center;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: "微软雅黑", sans-serif;
+            position: relative;
+        }
+
+        .mask {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+        }
+
+        .title {
+            font-size: 40px;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+        }
+
+        .gongde {
+            font-size: 28px;
+            color: #ffd700;
+            text-shadow: 0 0 8px #000;
+            margin-bottom: 50px;
+        }
+
+        .btn {
+            width: 180px;
+            height: 100px;
+            background: linear-gradient(145deg, #ff9bbb, #ff5c8a);
+            border-radius: 25px;
+            font-size: 28px;
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            transition: 0.15s;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .float {
+            position: absolute;
+            color: #ffd700;
+            font-size: 26px;
+            text-shadow: 0 0 5px #000;
+            pointer-events: none;
+            animation: floatUp 1s ease-out forwards;
+            z-index: 100;
+        }
+
+        @keyframes floatUp {
+            0% { opacity:1; transform: translateY(0); }
+            100% { opacity:0; transform: translateY(-100px); }
+        }
+        /* 飘落爱心花瓣 */
+        .petal{position:fixed;top:-10px;z-index:0;pointer-events:none;border-radius:50%;background:#ffc8da;opacity:0.7;}
+    </style>
+</head>
+<body>
+<div class="mask"></div>
+<button class="music-btn" id="musicBtn">🎵</button>
+
+<div class="container">
+    <div class="title">Anima Mea</div>
+    <div class="gongde">功德值：<span id="num">0</span></div>
+    <button class="btn" id="btn">人机</button>
+</div>
+
+
+<script>
+    // 飘落花瓣
+    setInterval(()=>{
+        let p = document.createElement('div');
+        p.className = 'petal';
+        p.style.left = Math.random()*100 + 'vw';
+        p.style.width = p.style.height = (Math.random()*8+4) + 'px';
+        p.style.transition = Math.random()*5+8 + 's linear';
+        document.body.appendChild(p);
+        setTimeout(()=>p.style.top='100vh',10);
+        setTimeout(()=>p.remove(),13000);
+    },300);
+
+    let count = 0;
+    const num = document.getElementById('num');
+    const btn = document.getElementById('btn');
+
+    btn.onclick = function(e) {
+        count++;
+        num.innerText = count;
+
+        let f = document.createElement('div');
+        f.className = 'float';
+        f.innerText = '❤️ 功德 +1';
+        f.style.left = e.clientX + 'px';
+        f.style.top = e.clientY + 'px';
+        document.body.appendChild(f);
+
+        setTimeout(() => f.remove(), 1000);
+    }
+    // 背景音乐控制
+    const bgMusic = document.getElementById('bgMusic');
+    const musicBtn = document.getElementById('musicBtn');
+    let musicPlay = false;
+
+    // 页面任意位置点一下自动开播（浏览器限制不能自动放）
+    document.body.addEventListener('click', ()=>{
+        if(!musicPlay){
+            bgMusic.play();
+            musicPlay = true;
+            musicBtn.innerText = '🔊';
+        }
+    });
+
+    // 开关切换
+    musicBtn.onclick = (e)=>{
+        e.stopPropagation();
+        if(musicPlay){
+            bgMusic.pause();
+            musicPlay = false;
+            musicBtn.innerText = '🎵';
+        }else{
+            bgMusic.play();
+            musicPlay = true;
+            musicBtn.innerText = '🔊';
+        }
+    };
+</script>
+
+
+<audio id="bgMusic" loop preload="auto">
+    <source src="https://files.catbox.moe/wn52ll.mp3" type="audio/mpeg">
+</audio>
+
+</body>
+</html>
